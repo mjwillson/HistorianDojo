@@ -2,14 +2,14 @@ import Data.List
 import Data.List.Split
 import System.Process
 
+getName :: String -> String
+getName line = name
+  where _:_:name:_ = splitOn "\t" line
+
 -- The program - a function from a list of strings (git log) to another list of strings (output)
 program :: [String] -> [String]
------ YOUR CODE HERE -----
-program log = log                                            -- echo
---program = id                                                 -- (also) echo
---program log = [(show $ length log) ++ " commits"]            -- commit count
---program = sort . concat . map (words . last . splitOn "\t")  -- sorted list of words in commit subjects
-
+program = map authorCount . group . sort . map getName
+  where authorCount l = (head l) ++ " -> " ++ (show $ length l)
 
 -- Customise this if you want different info from git (see "git log --help")
 --   hash <tab> timestamp <tab> author <tab> subject
