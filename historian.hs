@@ -7,13 +7,18 @@ getName line = name
   where _:_:name:_ = splitOn "\t" line
 
 -- The program - a function from a list of strings (git log) to another list of strings (output)
-program :: [String] -> [String]
-program = map authorCount . group . sort . map getName
+analyseHistory :: [String] -> [String]
+analyseHistory = map authorCount . group . sort . map getName
   where authorCount l = (head l) ++ " -> " ++ (show $ length l)
+
+-- You could use/adapt this as sample input to 'analyseHistory'
+egInput = ["aaaaaaa\t10000\tAlice\tInitial commit",
+           "bbbbbbb\t20000\tBob\tBreak something",
+           "ccccccc\t30000\tAlice\tFix it!"]
 
 -- Customise this if you want different info from git (see "git log --help")
 --   hash <tab> timestamp <tab> author <tab> subject
-gitLogArgs = ["--pretty=%h\t%at\t%an\t%s"]
+gitLogArgs = ["--pretty=%h%x09%at%x09%an%x09%s"]
 
 
 --------------------------------------------------------------------------------
@@ -21,10 +26,10 @@ gitLogArgs = ["--pretty=%h\t%at\t%an\t%s"]
 -- Runs everything (including 'git log') straight from Haskell (maybe useful for interactive testing).
 -- Usage: ghci> run "path/to/repo"
 run :: String -> IO ()
-run repoDir = gitLog >>= (putStr . unlines . program . lines)
+run repoDir = gitLog >>= (putStr . unlines . analyseHistory . lines)
   where gitLog = readProcess "git" (["-C", repoDir, "log"] ++ gitLogArgs) ""
 
 -- Pipe in git logs, pipe out results
 -- Usage: $ git log --pretty=... | runhaskell /path/to/historian.hs
 main :: IO ()
-main = interact (unlines . program . lines)
+main = interact (unlines . analyseHistory . lines)
