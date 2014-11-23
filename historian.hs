@@ -7,7 +7,7 @@ import System.Process
 analyseHistory :: [String] -> [String]
 ----- YOUR CODE HERE -----
 analyseHistory log = log                                            -- echo
---analyseHistory log = [(show $ length log) ++ " commits"]            -- commit count
+--analyseHistory log = [(show (length log)) ++ " commits"]            -- commit count
 --analyseHistory = sort . concat . map (words . last . splitOn "\t")  -- sorted list of words in commit subjects
 
 
